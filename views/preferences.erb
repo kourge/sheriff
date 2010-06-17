@@ -1,0 +1,51 @@
+
+<% prefs = Sheriff[@user.mail[0]] %>
+<div id="user-preferences">
+<form action="" method="post" class="user-preferences">
+  <h2>Preferences</h2>
+
+  <p>
+  <label for="fullname">Name: </label>
+  <input type="text" name="fullname" id="fullname"
+         value="<%= prefs.fullname %>" />
+  </p>
+
+  <p>
+  <label for="nick">IRC nick: </label>
+  <input type="text" name="nick" id="nick"
+         value="<%= prefs.nick %>" />
+  </p>
+
+  <!--
+  <p>
+  <label for="preferred_email">Preferred email address: </label>
+  <input type="email" name="preferred_email" id="preferred_email"
+         value="<%# prefs. %>" />
+  </p>
+  -->
+
+  <p>
+  <input type="checkbox" name="email_notifications" id="email_notifications"
+         <%= prefs.email_notifications.checked %> />
+  <label for="email_notifications">
+    Email me about sheriff-related activities
+  </label>
+  </p>
+
+  <p>
+  <input type="checkbox" name="upcoming_duty_notifications" id="upcoming_duty_notifications"
+         <%= prefs.upcoming_duty_notifications.checked %> />
+  <label for="upcoming_duty_notifications">
+    Email me about my upcoming sheriff duties
+  </label>
+  <input type="number" name="days_in_advance_for_upcoming_duty" id="days_in_advance_for_upcoming_duty" min="1" max="255"
+         value="<%= prefs.days_in_advance_for_upcoming_duty %>" />
+  <label for="upcoming_duty_notifications">
+    <span class="days days_in_advance_for_upcoming_duty">days</span> in advance
+  </label>
+  </p>
+
+  <input type="submit" value="Save" />
+</form>
+</div>
+

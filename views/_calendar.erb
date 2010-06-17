@@ -1,0 +1,96 @@
+  <div><table>
+    <colgroup>
+      <col id="col-month" />
+      <col id="col-sun" />
+      <col id="col-mon" />
+      <col id="col-tue" />
+      <col id="col-wed" />
+      <col id="col-thu" />
+      <col id="col-fri" />
+      <col id="col-sat" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    <%
+      days = {}
+      Day.where(:day => first_day..last_day).each do |row|
+        # The string representation of a day incurs less overhead.
+        days[row.day.to_s] = row
+      end
+  
+      (Month.new(first_day)..Month.new(last_day)).each do |month|
+        first = true
+        weeks = case month.month
+          when first_day.month then month.weeks_after(first_day)
+          when last_day.month then month.weeks_before(last_day)
+          else month.weeks
+        end
+        weeks.each do |week|
+        %>
+          <tr>
+            <% if first %>
+              <th rowspan="<%= weeks.size %>">
+                <%= Date::ABBR_MONTHNAMES[month.month] %>
+              </th>
+            <% first = false; end %>
+            <% week.each do |day| %>
+              <% if day.nil? %><td class="noday"></td><%
+                 else 
+                 this_day = Date.new(month.year, month.month, day)
+                 key = this_day.strftime('%Y-%m-%d')
+                 past = this_day < today
+                 user_on_duty = days[key].maybe(:sheriff).maybe(:mail) == @user.mail[0]
+                 classes = []
+                 classes << 'past' if past
+                 classes << 'today' if not past and this_day == today
+                 classes << 'self' if user_on_duty %>
+                <td class="<%= classes.join(' ') %>">
+                  <div class="day"
+                       data-day="<%= this_day %>"><%= day %></div>
+                  <% if days[key] %>
+                    <p class="sheriff"
+                       data-mail="<%= days[key].sheriff.mail %>"
+                       data-nick="<%= days[key].sheriff.nick %>">
+                      <a href="#">
+                        <%= days[key].sheriff.mail.sub(/@.+/, '') %><br />
+                        <em>(<%= days[key].sheriff.nick %>)</em>
+                      </a>
+                    </p>
+                    <%# Subbing may only work on present and future %>
+                    <% if not past %>
+                      <p class="command">
+                        <% if user_on_duty %>
+                          <a rel="swap-req" href="#">Request a Swap</a>
+                        <% else %>
+                          <a rel="swap-offer" href="#">Offer to Swap</a>
+                        <% end %>
+                      </p>
+                    <% end %>
+                  <% end %>
+                </td>
+              <% end %>
+            <% end %>
+          </tr>
+        <%
+        end
+      end
+    %>
+    <!--
+      <tr><th><%= first_day.to_json %></th><td colspan="7"></td></tr>
+      <tr><th><%= today.to_json %></th><td colspan="7"></td></tr>
+      <tr><th><%= last_day.to_json %></th><td colspan="7"></td></tr>
+    -->
+    </tbody>
+  </table></div>

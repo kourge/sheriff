@@ -1,0 +1,156 @@
+
+Object.extend(Date.prototype, {
+  window: function window(before, after) {
+    before = before == undefined ? 1 : before;
+    after = after == undefined ? 3 : after;
+    var day = 1000 * 60 * 60 * 24;
+    var first = this.valueOf() - (7 * day * before);
+    first -= (new Date(first)).getDay() * day;
+    var last = this.valueOf() + (7 * day * after);
+    last += (6 - (new Date(last)).getDay()) * day;
+    return [new Date(first), new Date(last)];
+  }, 
+
+  strftime: function(format) {
+    var day = this.getUTCDay(), month = this.getUTCMonth();
+    var hours = this.getUTCHours(), minutes = this.getUTCMinutes();
+    function pad(num) { return num.toPaddedString(2); };
+
+    return format.gsub(/\%([aAbBcdDHiImMpSwyY])/, function(part) {
+      switch(part[1]) {
+        case 'a': return $w("Sun Mon Tue Wed Thu Fri Sat")[day]; break;
+        case 'A': return $w("Sunday Monday Tuesday Wednesday Thursday Friday Saturday")[day]; break;
+        case 'b': return $w("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")[month]; break;
+        case 'B': return $w("January February March April May June July August September October November December")[month]; break;
+        case 'c': return this.toString(); break;
+        case 'd': return this.getUTCDate(); break;
+        case 'D': return pad(this.getUTCDate()); break;
+        case 'H': return pad(hours); break;
+        case 'i': return (hours === 12 || hours === 0) ? 12 : (hours + 12) % 12; break;
+        case 'I': return pad((hours === 12 || hours === 0) ? 12 : (hours + 12) % 12); break;
+        case 'm': return pad(month + 1); break;
+        case 'M': return pad(minutes); break;
+        case 'p': return hours > 11 ? 'PM' : 'AM'; break;
+        case 'S': return pad(this.getUTCSeconds()); break;
+        case 'w': return day; break;
+        case 'y': return pad(this.getUTCFullYear() % 100); break;
+        case 'Y': return this.getUTCFullYear().toString(); break;
+      }
+    }.bind(this));
+  }
+});
+
+Element.addMethods({
+  insertTo: function insertTo(element, target) {
+    if (!(element = $(element))) return;
+    if (!(target = $(target))) return;
+    target.insert(element);
+  },
+
+  showLightbox: function showLightbox(element) {
+    if (!(element = $(element))) return;
+    return element.setStyle('opacity', 0).addClassName('visible').fadeTo(500, 1);
+  },
+
+  hideLightbox: function hideLightbox(element) {
+    if (!(element = $(element))) return;
+    return element.fadeTo(500, 0, function() {
+      console.log(this);
+      $(this).removeClass('visible');
+    });
+  }
+});
+
+(function(names) {
+  var methods = {};
+  $w(names).each(function(m) {
+    methods[m] = function() {
+      arguments = $A(arguments);
+      var element = arguments.shift(), wrapped = jQuery(element);
+      return wrapped[m].apply(wrapped, arguments);
+    };
+  });
+  Element.addMethods(methods);
+})('slideDown slideToggle slideUp fadeIn fadeOut fadeTo animate dequeue queue stop');
+
+
+$(document).on('dom:loaded', function() {
+  $$("div.flash").each(function(flash) {
+    new Element('div', {'class': 'flash-close'}).on('click', function() {
+      this.up().fadeOut();
+      event.stop();
+    }).update('<a href="#">&times;</a>').insertTo(this);
+  });
+});
+
+(function($) {
+$.fn.extend({
+  showLightbox: function() {
+    return this.css('opacity', 0).addClass('visible').fadeTo(500, 1);
+  },
+  
+  hideLightbox: function() {
+    return this.fadeTo(500, 0, function() {
+      $(this).removeClass('visible');
+    });
+  },
+  
+  escape: function(f) {
+    return this.keypress(function(e) {
+      if (e.keyCode == 27) {
+        return f.apply(this, [e]);
+      }
+    });
+  }
+});
+})(jQuery);
+
+(function($) {
+$(document).ready(function() {
+  $([
+    { rel: 'log-in', box: 'login-lightbox'  },
+    { rel: 'swap-offer', box: 'swapoffer-lightbox'  },
+    { rel: 'swap-req', box: 'swapreq-lightbox'  },
+    { rel: 'volunteer', box: 'volunteer-lightbox'  },
+    { rel: 'back-out', box: 'backout-lightbox'  },
+  ]).each(function (_, i) {
+    var selectBox = '#'+i.box;
+    var selectLinks = 'a[rel='+i.rel+']';
+    
+    $(selectLinks).click(function() {
+      var onEscape = function(e) {
+        if (e.keyCode == 27) {
+          return doHide();
+        }
+      };
+      
+      var onSubmit = function() {
+        return doHide();
+      };
+      
+      var doHide = function() {
+        $(document).unbind('keypress', onEscape);
+        $(document).unbind('submit', onSubmit);
+        $(selectBox).hideLightbox();
+        return false;
+      };
+
+      $(document).keypress(onEscape);
+      if (i.rel != "log-in") {
+        $(selectBox+' form').submit(onSubmit);
+      }
+      $(selectBox+' .cancel').click(doHide);
+
+      $(selectBox).showLightbox();
+      $(selectBox+' input:first').focus();
+      
+      return false;
+    });
+    
+    $(document).escape(function() {
+      $(selectBox).hideLightbox();
+    });
+  });
+
+});
+})(jQuery);

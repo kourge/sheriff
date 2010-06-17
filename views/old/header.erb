@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Mozilla Sheriff Duty</title>
+  <link rel="stylesheet" type="text/css" href="sheriff.css" />
+</head>
+
+<body>
+
+<div id="header">
+  <h1>Mozilla Sheriff Duty</h1>
+  <ul id="tabs"><%
+    [
+      {:title => 'Calender', :path => '/'},
+      {:title => 'Roster', :path => '/roster'},
+      {:title => 'Settings', :path => '/settings'}
+    ].each do |link|
+      title, path, active = link[:title], link[:path],
+                            (request.path == link[:path] ? 'active' : '')
+    %>
+      <li><a class="<%= active %>" href="<%= path %>"><%= title %></a></li><%
+    end %>
+  </ul>
+
+  <div id="user">
+    <% if @user %>
+      Howdy, <strong><%= @user.cn[0] %></strong>
+      <a href="/logout">Log Out</a>
+    <% else %>
+      <a href="/login" rel="log-in">Log In</a>
+    <% end %>
+  </div>
+</div>

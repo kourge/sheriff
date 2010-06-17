@@ -1,0 +1,48 @@
+
+<%= partial :calbar %>
+<%
+today = Date.today
+window = today.window
+%>
+<div id="calendar-nav">
+  <form class="nav"><ul>
+    <li><button id="previous-month">&laquo; Month</button></li>
+    <li><button id="previous-week">&laquo; Week</button></li>
+    <li>
+      <select>
+        <option>- Jump to Month -</option><%
+        this_month = Month.new(today)
+        month_window = Month.new(window.first)..Month.new(window.last)
+        lower_bound = month_window.first - 6
+        upper_bound = month_window.last + 6
+        (lower_bound..upper_bound).each do |month|
+          attrs = {'data-month' => month.to_s, 'class' => 'month'}
+          attrs['class'] += ' current' if month_window.include? month
+        %>
+        <option <%= attrs.map { |k, v| "#{k}=\"#{v}\"" }.join(' ') %>><%= 
+          label = month.to_date.strftime '%Y %B'
+          month == this_month ? label + ' &bull;' : label
+        %></option>
+        <% end %>
+      </select>
+    </li>
+    <li><button id="reset-to-today">Today</button></li>
+    <li><button id="next-week">Week &raquo;</button></li>
+    <li><button id="next-month">Month &raquo;</button></li>
+  </ul></form>
+</div>
+
+<div id="calendar">
+  <%= partial :calendar, :locals => {
+        :today => today, :first_day => window.first, :last_day => window.last
+      } %>
+  <script>
+<%=
+  {
+    :today => today,
+    :start => window.first.strftime('%Y-%m-%d'),
+    :end => window.last.strftime('%Y-%m-%d')
+  }.map { |k, v| "  Calendar.#{k} = (new Date('#{v}')).valueOf();" }.join("\n")
+%>
+  </script>
+</div>

@@ -1,0 +1,41 @@
+
+<h2>Subbings</h2>
+<% if defined? requests %>
+<h3>Requests</h3>
+  <% requests.each do |request| %>
+  <div class="requests">
+    <div class="subbing request">
+      <%= request.subject.nick %> has requested that you sub as sheriff on <time><%= request.day %></time> with the following comment:
+      <blockquote class="comment">
+      <%= request.comment %>
+      </blockquote>
+      <form method="post" class="subbing" action="/subbings/request/take/<%= request.id %>">
+        <input type="submit" class="take" value="Take" />
+      </form>
+      <form method="post" class="subbing" action="/subbings/request/dismiss/<%= request.id %>">
+        <input type="submit" class="dismiss" value="Dismiss" />
+      </form>
+    </div>
+  </div>
+  <% end %>
+<% end %>
+
+<% if defined? offers %>
+<h3>Offers</h3>
+  <% offers.each do |offer| %>
+  <div class="offers">
+    <div class="subbing offer">
+      <%= offer.subject.nick %> has offered to sub as sheriff in your place on <time><%= offer.day %></time> with the following comment:
+      <blockquote class="comment">
+      <%= offer.comment %>
+      </blockquote>
+      <form method="post" class="subbing" action="/subbings/offer/accept/<%= offer.id %>">
+        <input type="submit" class="accept" value="Accept" />
+      </form>
+      <form method="post" class="subbing" action="/subbings/offer/decline/<%= offer.id %>">
+        <input type="submit" class="decline" value="Decline" />
+      </form>
+    </div>
+  </div>
+  <% end %>
+<% end %>

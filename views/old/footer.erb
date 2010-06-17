@@ -1,0 +1,82 @@
+
+<div id="login-lightbox" class="lightbox">
+  <form method="post" action="/login"><div>
+    <h2>Log in</h2>
+    <p>Enter your Mozilla LDAP credentials to log in as a sheriff or an admin.</p>
+    <div class="indent">
+      <p>
+        <input type="text" id="username" name="username" />
+      </p>
+      <p>
+        <input type="password" id="password" name="password" />
+      </p>
+    </div>
+    <p class="buttons">
+      <input type="submit" class="submit" value="Log in" />
+      <a class="cancel" href="#">Cancel</a>
+    </p>
+  </div></form>
+</div>
+
+<div id="swapreq-lightbox" class="lightbox">
+  <form method="post" action="#"><div>
+    <h2>Request a Swap of Sheriff Duty</h2>
+    <p>You are asking for another sheriff to assume duty on:</p>
+    <div class="indent">
+      <p>
+        <strong>Friday, August 8, 2009</strong>
+      </p>
+    </div>
+    <p>
+      An email will be sent to the sheriffs' mailing list
+      with this request.
+    </p>
+    <p>Do you want to leave a comment with this request?</p>
+    <div class="indent">
+      <p>
+        <textarea rows="4" cols="56"></textarea>
+      </p>
+    </div>
+    <p class="buttons">
+      <input type="submit" class="submit" value="Make the Request" />
+      <a class="cancel" href="#">Never Mind</a>
+    </p>
+  </div></form>
+</div>
+
+<div id="swapoffer-lightbox" class="lightbox">
+  <form method="post" action="#"><div>
+    <h2>Offer to Swap Sheriff Duty</h2>
+    <p>
+      You are offering to take over sheriff duty on
+    </p>
+    <div class="indent">
+      <p>
+        <strong>Thursday, August 7, 2009</strong>
+      </p>
+    </div>
+    <p>
+      An email will be sent to the current sheriff,
+      <a class="sheriff">Stuart Parmenter <em>(stuart)</em></a>,
+      requesting his permission.
+    </p>
+    <p>Do you want to leave a comment for with your offer?</p>
+    <div class="indent">
+      <p>
+        <textarea rows="4" cols="56"></textarea>
+      </p>
+    </div>
+    <p class="buttons">
+      <input type="submit" class="submit" value="Extend the Offer" />
+      <a class="cancel" href="#">Never Mind</a>
+    </p>
+  </div></form>
+</div>
+
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="sheriff.js"></script>
+
+
+</body>
+</html>

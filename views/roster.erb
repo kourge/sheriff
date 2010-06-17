@@ -1,0 +1,16 @@
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Nick</th>
+    </tr>
+  </thead>
+  <tbody><% Sheriff.order(:mail).each do |sheriff| %>
+    <tr>
+      <td><%= sheriff.mail %></td>
+      <td><%= sheriff.nick %></td>
+    </tr>
+  <% end %></tbody>
+</table>
+

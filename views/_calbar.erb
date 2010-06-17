@@ -1,0 +1,62 @@
+
+<%
+today = Date.today
+yesterday = today - 1
+tomorrow = today + 1
+%>
+<div id="cal-bars">
+  <div id="deck"><div>
+    <h2><span>Who's on Duty Next</span></h2>
+    <ul>
+      <%
+      Day.where(:day => yesterday..(today + 5)).each do |day|
+        classes = []
+        name = case day.day
+          when yesterday
+            classes << 'yesterday'
+            'Yesterday'
+          when today
+            classes << 'today'
+            'Today'
+          when tomorrow
+            classes << 'tomorrow'
+            'Tomorrow'
+          else
+            day.day.strftime '%A'
+        end
+      %>
+      <li class="<%= classes.join(' ') %>">
+        <strong><%= name %></strong>
+        <a class="sheriff" href="#">
+          <%= day.sheriff.nick %> <em>(<%#= day.sheriff.mail %>)</em>
+        </a>
+        <span>
+          <a rel="swap-offer" href="#">Offer to Swap</a>
+        </span>
+      </li>
+      <% end %>
+    </ul>
+  </div></div>
+
+  <div id="schedule"><div>
+    <h2><span>When I'm on Duty</span></h2>
+    <ul>
+      <%
+      mail = @user.mail[0]
+      filter = lambda { (day >= today) & {sheriff_mail => mail} }
+      count = 0
+      Day.where(&filter).order(:day).limit(5).each do |day|
+        count += 1
+        classes = []
+        classes << 'next' if count == 1
+      %>
+      <li class="<%= classes.join(' ') %>">
+        <a class="date" href=""><%= day.day.strftime '%A, %B %d, %Y' %></a>
+        <span>
+          <a rel="swap-req" href="#">Request a Swap</a>
+        </span>
+      </li>
+      <% end %>
+    </ul>
+  </div></div>
+</div>

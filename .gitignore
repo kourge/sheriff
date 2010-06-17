@@ -1,0 +1,5 @@
+config.ru
+config.yaml
+tmp
+*.swp
+*.swo
