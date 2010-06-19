@@ -14,13 +14,19 @@ post '/preferences' do
   }
   prefs.each do |pref, type|
     input = request[pref.to_s]
-    prefs[pref] = case type
-      when String then input
-      when Boolean then (input == 'on')
-      when Integer then input.to_i
-    end
+    prefs[pref] = {
+      String => lambda { input },
+      Boolean => lambda { (input == 'on') },
+      Integer => lambda { input.to_i }
+    }[type].call
   end
-  content_type :plain
-  prefs.inspect
+  Sheriff[@user.mail[0]].update(prefs)
+
+  if accept_json?
+    content_type :json
+    { :success => true }.to_json
+  else
+    redirect_back
+  end
 end
 

@@ -14,8 +14,7 @@ class << DB
 end
 
 class Sheriff < Sequel::Model
-  # Get name of sheriff from LDAP. Presumably implement a cached set.
-  # def name; end
+  one_to_many :days, :key => :sheriff_mail
 end
 
 class Day < Sequel::Model

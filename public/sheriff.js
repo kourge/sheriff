@@ -14,6 +14,7 @@ Element.addMethods({
     if (!(element = $(element))) return;
     if (!(target = $(target))) return;
     target.insert(element);
+    return element;
   },
 
   find: function find(element, expr) {
@@ -44,10 +45,12 @@ $(document).on('keypress', function(event) {
 $(document).on('dom:loaded', function() {
   // Attach close links to flash messages.
   $$("div.flash").each(function(flash) {
-    new Element('div', {'class': 'flash-close'}).on('click', function() {
+    new Element('div', {'class': 'flash-close'}).update(
+      '<a href="#">&times;</a>'
+    ).observe('click', function(event) {
       this.up().fadeOut();
       event.stop();
-    }).update('<a href="#">&times;</a>').insertTo(this);
+    }).insertTo(flash);
   });
 });
 

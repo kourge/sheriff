@@ -47,23 +47,25 @@ var Lightboxes = {
         var onSubmit = null;
         if (lightbox.rel != 'log-in') {
           onSubmit = box.down('form').on('submit', function(e) {
-            e.stop();
-            if (Object.isFunction(lightbox.beforeSubmit)) {
-              if (!lightbox.beforeSubmit(box)) {
-                return;
-              }
+            if (Object.isFunction(lightbox.beforeSubmit) &&
+                !lightbox.beforeSubmit(box, e, doHide)) {
+              return;
             }
-            doHide();
+            // doHide();
           });
         }
         
-        var doHide = function() {
+        var doHide = function(e) {
+          e && e.stop();
           onEscape.stop();
           onSubmit && onSubmit.stop();
           box.hideLightbox();
         };
 
-        box.down('.cancel').on('click', doHide);
+        box.down('.cancel').on('click', function(e) {
+          Object.isFunction(lightbox.beforeCancel) && lightbox.beforeCancel(box);
+          doHide(e);
+        });
         Object.isFunction(lightbox.beforeShow) && lightbox.beforeShow(box, link);
         box.showLightbox();
         box.down('input:first').focus();
@@ -76,52 +78,6 @@ var Lightboxes = {
     });
   }
 };
-
-[
-  { rel: 'log-in', box: 'login-lightbox' },
-
-  {
-    rel: 'swap-offer', box: 'swapoffer-lightbox',
-    beforeShow: function(box, link) {
-      var parent = link.up('td');
-      var date = parent.find('[data-day]').readAttribute('data-day');
-      var sheriff = parent.find('.sheriff');
-      var data = {
-        nick: sheriff.readAttribute('data-nick'),
-        mail: sheriff.readAttribute('data-mail')
-      };
-      box.find('p.date').update(new Date(date).strftime('%A, %B %d, %Y'));
-      box.find('a.sheriff').update(
-        '#{nick} <em>(#{mail})</em>'.interpolate(data)
-      );
-      box.find('textarea').clear();
-
-      box.down('form').injectValues({ day: date, object: data.mail });
-    },
-
-    beforeSubmit: function(box) {
-      var form = box.down('form');
-      console.log(form.serialize());
-      return false;
-    }
-  },
-
-  {
-    rel: 'swap-req', box: 'swapreq-lightbox',
-    beforeShow: function(box, link) {
-      console.log(this, box, link);
-    },
-
-    beforeSubmit: function(box) {
-      console.log(box);
-      return true;
-    }
-  }
-  /*
-  { rel: 'volunteer', box: 'volunteer-lightbox'  },
-  { rel: 'back-out', box: 'backout-lightbox'  }
-  */
-].each(Lightboxes.add.bind(Lightboxes));
 
 $(document).on('dom:loaded', function() {
   Lightboxes.setup();

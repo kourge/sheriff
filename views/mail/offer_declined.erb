@@ -1,5 +1,7 @@
-<%= name %>,
-<%= offeree %> has just declined to sub as sheriff on <%= day %> in your stead. 
+Hello <%= offer.object.nick %>,
+<%= offer.subject.nick %> has just declined to sub as sheriff on <%=
+  offer.day.strftime '%A, %B %d, %Y'
+%> in your stead. 
 
 Sad face,
 The Sheriffbot

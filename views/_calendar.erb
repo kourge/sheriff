@@ -57,12 +57,9 @@
                  classes << 'today' if not past and this_day == today
                  classes << 'self' if user_on_duty %>
                 <td class="<%= classes.join(' ') %>">
-                  <div class="day"
-                       data-day="<%= this_day %>"><%= day %></div>
+                  <div class="day"><%= day %></div>
                   <% if days[key] %>
-                    <p class="sheriff"
-                       data-mail="<%= days[key].sheriff.mail %>"
-                       data-nick="<%= days[key].sheriff.nick %>">
+                    <p class="sheriff">
                       <a href="#">
                         <%= days[key].sheriff.mail.sub(/@.+/, '') %><br />
                         <em>(<%= days[key].sheriff.nick %>)</em>
@@ -71,10 +68,17 @@
                     <%# Subbing may only work on present and future %>
                     <% if not past %>
                       <p class="command">
+                        <%
+                          data = {
+                            :day => this_day,
+                            :mail => days[key].sheriff.mail,
+                            :nick => days[key].sheriff.nick
+                          }.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
+                        %>
                         <% if user_on_duty %>
-                          <a rel="swap-req" href="#">Request a Swap</a>
+                          <a rel="swap-req" href="#" <%= data %>>Request a Swap</a>
                         <% else %>
-                          <a rel="swap-offer" href="#">Offer to Swap</a>
+                          <a rel="swap-offer" href="#" <%= data %>>Offer to Swap</a>
                         <% end %>
                       </p>
                     <% end %>

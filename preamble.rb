@@ -26,8 +26,5 @@ helpers do
   include Rack::Utils
 end
 
-use Rack::Session::Cookie, :key => 'rack.session', :secret => SETTINGS['secret']
-
-require 'rack-flash'
-use Rack::Flash, :accessorize => [:notice, :error]
+load 'mail.rb' if SETTINGS['mail']['enabled']
 

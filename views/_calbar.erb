@@ -24,15 +24,23 @@ tomorrow = today + 1
           else
             day.day.strftime '%A'
         end
+        data = {
+          :day => day.day,
+          :mail => day.sheriff.mail,
+          :nick => day.sheriff.nick
+        }
+        data_attrs = data.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
       %>
       <li class="<%= classes.join(' ') %>">
         <strong><%= name %></strong>
         <a class="sheriff" href="#">
-          <%= day.sheriff.nick %> <em>(<%#= day.sheriff.mail %>)</em>
+          <%= data[:nick] %> <em>(<%#= data[:mail] %>)</em>
         </a>
+        <% if data[:day] >= today %>
         <span>
-          <a rel="swap-offer" href="#">Offer to Swap</a>
+          <a rel="swap-offer" href="#" <%= data_attrs %>>Offer to Swap</a>
         </span>
+        <% end %>
       </li>
       <% end %>
     </ul>
@@ -49,11 +57,17 @@ tomorrow = today + 1
         count += 1
         classes = []
         classes << 'next' if count == 1
+        data = {
+          :day => day.day,
+          :mail => day.sheriff.mail,
+          :nick => day.sheriff.nick
+        }
+        data_attrs = data.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
       %>
       <li class="<%= classes.join(' ') %>">
-        <a class="date" href=""><%= day.day.strftime '%A, %B %d, %Y' %></a>
+        <a class="date" href=""><%= data[:day].strftime '%A, %B %d, %Y' %></a>
         <span>
-          <a rel="swap-req" href="#">Request a Swap</a>
+          <a rel="swap-req" href="#" <%= data_attrs %>>Request a Swap</a>
         </span>
       </li>
       <% end %>
