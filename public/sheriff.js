@@ -44,13 +44,22 @@ $(document).on('keypress', function(event) {
 
 $(document).on('dom:loaded', function() {
   // Attach close links to flash messages.
-  $$("div.flash").each(function(flash) {
+  $$('div.flash').each(function(flash) {
     new Element('div', {'class': 'flash-close'}).update(
       '<a href="#">&times;</a>'
     ).observe('click', function(event) {
       this.up().fadeOut();
       event.stop();
     }).insertTo(flash);
+  });
+
+  $('feed').value = 'initial';
+  // Turn <option>s into links if there are any.
+  $$('option.feed').each(function(option) {
+    option.on('click', function(event) {
+      event.stop();
+      window.location = '/ical/' + this.identify().sub(/^feed-/, '') + '.ics';
+    });
   });
 });
 

@@ -52,19 +52,26 @@
                  key = this_day.strftime('%Y-%m-%d')
                  past = this_day < today
                  user_on_duty = days[key].maybe(:sheriff).maybe(:mail) == @user.mail[0]
+                 sub_needed = days[key].maybe(:subbings).maybe(:find) { |s| s.request }
                  classes = []
                  classes << 'past' if past
                  classes << 'today' if not past and this_day == today
-                 classes << 'self' if user_on_duty %>
+                 classes << 'self' if user_on_duty
+                 classes << 'unclaimed' if sub_needed %>
                 <td class="<%= classes.join(' ') %>">
                   <div class="day"><%= day %></div>
-                  <% if days[key] %>
+                  <% if not days[key] %>
+                    <%= ('&nbsp;' * 24 + '<br />') * 5 %>
+                  <% else %>
                     <p class="sheriff">
                       <a href="#">
-                        <%= days[key].sheriff.mail.sub(/@.+/, '') %><br />
+                        <%= days[key].sheriff.fullname %><br />
                         <em>(<%= days[key].sheriff.nick %>)</em>
                       </a>
                     </p>
+                    <% if sub_needed %>
+                      <p><strong>Sub Needed</strong></p>
+                    <% end %>
                     <%# Subbing may only work on present and future %>
                     <% if not past %>
                       <p class="command">
@@ -73,12 +80,14 @@
                             :day => this_day,
                             :mail => days[key].sheriff.mail,
                             :nick => days[key].sheriff.nick
-                          }.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
+                          }.to_data_attrs
                         %>
                         <% if user_on_duty %>
-                          <a rel="swap-req" href="#" <%= data %>>Request a Swap</a>
+                          <a rel="sub-req" href="#" <%= data %>>Request a Sub</a>
+                        <% elsif not sub_needed %>
+                          <a rel="sub-offer" href="#" <%= data %>>Offer to Sub</a>
                         <% else %>
-                          <a rel="swap-offer" href="#" <%= data %>>Offer to Swap</a>
+                          <a rel="sub-req-take" href="#" <%= data %>>Be the Sub</a>
                         <% end %>
                       </p>
                     <% end %>

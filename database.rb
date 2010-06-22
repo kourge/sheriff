@@ -20,6 +20,17 @@ end
 class Day < Sequel::Model
   many_to_one :sheriff, :key => :sheriff_mail
   one_to_many :subbings, :key => :day_day
+
+  def before_update
+    self.updated = Time.now
+    self.revisions += 1
+    super
+  end
+
+  def before_create
+    self.updated = Time.now
+    super
+  end
 end
 
 class MockDay < Struct.new(:day, :sheriff)
@@ -33,6 +44,8 @@ class MockDay < Struct.new(:day, :sheriff)
     end
     result
   end
+
+  def subbings; [] end
 end
 
 class Subbing < Sequel::Model
@@ -46,24 +59,26 @@ class Subbing < Sequel::Model
   def calculate_id; self.id = self.class.calculate_id(self) end
 
   def self.fetch(hash) self[hash[:id] || self.calculate_id(hash)] end
+  def self.actives; self.where(:fulfilled => false) end
 
-  def self.of(o)
-    mail = o.respond_to?(:attribute_names) ? o.mail[0] : o
-    self.where({:subject_mail => mail} | {:object_mail => mail})
-  end
+  def fulfilled?; self.fulfilled end
 
-  # Whatever responds to attribute_names is presumed to be an LDAP user
+  # Whatever responds to attribute_names is presumed to be an LDAP user.
   def directed_to?(o)
     self.object_mail == (o.respond_to?(:attribute_names) ? o.mail[0] : o)
   end
 
-  def issued_by?(user)
-    self.subject_mail == (o.respond_to?(:attribute_names) ? o.mail[0] : o)
+  def after_initialize
+    self.fulfilled = false
+    super
   end
 
   plugin :validation_helpers
   def validate
     super
+
+    errors.add :day_day, "can't be in the past" if self.day_day < Date.today
+
     email = /\A([^@\s]+)@((?:[-a-z0-9]+.)+[a-z]{2,})\Z/i
     email_error = 'should be a valid sheriff email address'
     validates_presence :subject_mail
@@ -72,6 +87,12 @@ class Subbing < Sequel::Model
     if not self.request
       validates_presence :object_mail
       validates_format email, :object_mail, :message => email_error
+    end
+
+    if self.request and self.day.sheriff != self.object
+    errors.add :object_mail, "must be sheriff on #{self.day.day}"
+    elsif not self.request and self.day.sheriff != self.subject
+      errors.add :subject_mail, "must be sheriff on #{self.day.day}"
     end
   end
 end

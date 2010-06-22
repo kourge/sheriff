@@ -1,6 +1,6 @@
 
 class NilClass
-  def maybe(*a) self end
+  def maybe(*a, &b) self end
 end
 
 module Boolean
@@ -29,6 +29,10 @@ module Enumerable
     return self.map { |i| i.send(:[], *args) } unless block_given?
     self.each { |i| yield i.send(:[], *args) }
   end
+
+  def to_data_attrs
+    self.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
+  end
 end
 
 class Array
@@ -42,4 +46,13 @@ class Array
     self.map! { |i| yield i.send(:[], *args) }
   end
 end
+
+
+require 'digest'
+
+
+class String
+  def md5; Digest::MD5.hexdigest(self) end
+end
+
 

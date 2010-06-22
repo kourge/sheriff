@@ -222,7 +222,7 @@ h3 {
     color: #218020;
     }
   #deck li.unclaimed a.sheriff,
-  #deck li.swap-needed a.sheriff {
+  #deck li.sub-needed a.sheriff {
     color: #FF1D25;
     }
 
@@ -340,16 +340,16 @@ h3 {
         background-color: #327ABA;
         }
     #calendar td.unclaimed,
-    #calendar td.swap-needed {
+    #calendar td.sub-needed {
       background: #FFE8E9;
       border: 2px solid #FF1D25;
       }
       #calendar td.unclaimed .day,
-      #calendar td.swap-needed .day {
+      #calendar td.sub-needed .day {
         background: #FF1D25;
         }
       #calendar td.unclaimed strong,
-      #calendar td.swap-needed strong {
+      #calendar td.sub-needed strong {
         color: #FF1D25;
         font-weight: bold;
         }
@@ -476,18 +476,25 @@ h3 {
         font-style: italic;
         }
 
-#swapoffer-lightbox {}
-  #swapoffer-lightbox .sheriff {
+#suboffer-lightbox {}
+  #suboffer-lightbox .sheriff {
     font-weight: bold;
     }
-    #swapoffer-lightbox .sheriff em {
+    #suboffer-lightbox .sheriff em {
       font-style: italic;
       }
                         
-#swapreq-lightbox {}
-  #swapreq-lightbox h2 {
+#sub-req-lightbox {}
+  #sub-req-lightbox h2, #sub-offer-decline-lightbox h2 {
     background: #FF1D25;
     }
+
+/*
+#sub-req-take-lightbox {}
+  #sub-req-take-lightbox h2 {
+    background: #424242;
+    }
+    */
 
 p.error {
   font-size: 1.5em;
@@ -518,7 +525,7 @@ div.subbing {
 form.subbing {
   display: inline;
   }
-  form.subbing input {
+  form.subbing input, form.subbing a {
     border: none;
     background-color: #727167;
     color: #D5D0B2;
@@ -529,10 +536,14 @@ form.subbing {
     -moz-border-radius: 0.25em;
     -webkit-border-radius: 0.25em;
     }
-    form.subbing input:hover {
+  form.subbing a {
+    padding: 0.35em;
+    }
+    form.subbing input:hover, form.subbing a:hover {
       color: #FFF;
       }
-    form.subbing input.take, form.subbing input.accept {
+    form.subbing input.take, form.subbing input.accept, form.subbing a.take,
+    form.subbing a.accept {
       background-color: #424242;
       }
 

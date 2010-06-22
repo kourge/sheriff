@@ -27,4 +27,5 @@ helpers do
 end
 
 load 'mail.rb' if SETTINGS['mail']['enabled']
+load 'feeds.rb' if SETTINGS['ical']['enabled']
 

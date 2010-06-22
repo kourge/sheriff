@@ -1,13 +1,7 @@
 require 'net/ldap'
-require 'digest'
 
 
-class String
-  def md5; Digest::MD5.hexdigest(self) end
-end
-
-
-# The DN class in responsible for parsing various info out of an email address.
+# The DN class responsible for parsing various info out of an email address.
 # It is assumed that an input like "karen" is meant to be "karen@mozilla.com".
 class DN < Struct.new(:dn, :mail, :o)
   def initialize(mail)
@@ -84,7 +78,7 @@ helpers do
   def initialize_user(username)
     populate_user(username)
     mail = @user.mail[0]
-    # Prefill some information
+    # Prefill some information.
     Sheriff.new(
       :mail => mail,
       :fullname => @user.cn[0],
@@ -106,7 +100,10 @@ post '/login' do
   username, password = request['username'], request['password']
   succeeded = login(username, password)
   error 401, 'Authentication failed.' if not succeeded
-  initialize_user(username) if first_time? username
+  if first_time? username
+    initialize_user(username)
+    flash.notice 'Since this is your first time logging in, please take a moment and set your Preferences.'
+  end
   redirect_back
 end
 

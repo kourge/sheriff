@@ -2,19 +2,28 @@
 <h2>Subbings</h2>
 <% if defined? requests %>
 <h3>Requests</h3>
-  <% requests.each do |request| %>
+  <% requests.each do |req| %>
   <div class="requests">
     <div class="subbing request">
-      <%= request.subject.nick %> has requested that you sub as sheriff on <time><%= request.day %></time> with the following comment:
+      <%= req.subject.fullname %> (<%= req.subject.nick %>) has requested that someone sub as sheriff on <time><%= req.day.day.strftime '%A, %B %d, %Y' %></time> with the following comment:
       <blockquote class="comment">
-      <%= request.comment %>
+      <%= req.comment %>
       </blockquote>
-      <form method="post" class="subbing" action="/subbings/request/take/<%= request.id %>">
-        <input type="submit" class="take" value="Take" />
+      <form method="post" class="subbing" action="/subbings/request/take/<%= req.id %>">
+        <!--<input type="submit" class="take" value="Take this request" />-->
+        <%
+        data = {
+          :nick => req.subject.nick, :mail => req.subject.mail,
+          :day => req.day.day, :id => req.id
+        }
+        %>
+        <a rel="sub-req-take" class="take" href="#" <%= data.to_data_attrs %>>Take this request</a>
       </form>
-      <form method="post" class="subbing" action="/subbings/request/dismiss/<%= request.id %>">
-        <input type="submit" class="dismiss" value="Dismiss" />
+      <!--
+      <form method="post" class="subbing" action="/subbings/request/dismiss/<%= req.id %>">
+        <input type="submit" class="dismiss" value="Dismiss this request" />
       </form>
+      -->
     </div>
   </div>
   <% end %>
@@ -25,15 +34,23 @@
   <% offers.each do |offer| %>
   <div class="offers">
     <div class="subbing offer">
-      <%= offer.subject.nick %> has offered to sub as sheriff in your place on <time><%= offer.day %></time> with the following comment:
+      <%= offer.subject.fullname %> (<%= offer.subject.nick %>) has offered to sub as sheriff in your place on <time><%= offer.day.day.strftime '%A, %B %d, %Y' %></time> with the following comment:
       <blockquote class="comment">
       <%= offer.comment %>
       </blockquote>
+      <%
+      data = {
+        :nick => offer.subject.nick, :mail => offer.subject.mail,
+        :day => offer.day.day, :id => offer.id
+      }
+      %>
       <form method="post" class="subbing" action="/subbings/offer/accept/<%= offer.id %>">
-        <input type="submit" class="accept" value="Accept" />
+        <!--<input type="submit" class="accept" value="Accept this offer" />-->
+        <a rel="sub-offer-accept" class="accept" href="#" <%= data.to_data_attrs %>>Accept this offer</a>
       </form>
       <form method="post" class="subbing" action="/subbings/offer/decline/<%= offer.id %>">
-        <input type="submit" class="decline" value="Decline" />
+        <!--<input type="submit" class="decline" value="Decline this offer" />-->
+        <a rel="sub-offer-decline" class="decline" href="#" <%= data.to_data_attrs %>>Decline this offer</a>
       </form>
     </div>
   </div>

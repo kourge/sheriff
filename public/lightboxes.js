@@ -2,14 +2,26 @@
 Element.addMethods({
   showLightbox: function showLightbox(element) {
     if (!(element = $(element))) return;
-    return element.setStyle({opacity: 0}).addClassName('visible').fadeTo(500, 1);
+    element.setStyle({opacity: 0}).addClassName('visible').fadeTo(250, 1);
+    return element.find('form').setStyle({
+      marginTop: '-40%'
+    }).addClassName('visible').animate({marginTop: '0%'}, 300, 'swing');
+    // return element.setStyle({opacity: 0}).addClassName('visible').fadeTo(500, 1);
   },
 
   hideLightbox: function hideLightbox(element) {
     if (!(element = $(element))) return;
+    element.fadeTo(250, 0);
+    return element.find('form').animate(
+      {marginTop: '-40%'}, 300, 'swing', function() {
+        element.removeClassName('visible');
+      }
+    );
+    /*
     return element.fadeTo(500, 0, function() {
       this.removeClassName('visible');
     });
+    */
   }
 });
 

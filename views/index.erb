@@ -6,6 +6,17 @@ window = today.window
 %>
 <div id="calendar-nav">
   <form class="nav"><ul>
+    <% if SETTINGS['ical']['enabled'] %>
+    <li class="subscribe">
+      Subscribe to:
+      <select id="feed">
+        <option value="initial">- Select a Calendar -</option>
+        <option class="feed" id="feed-all">All Sheriff Rotations</option>
+        <option class="feed" id="feed-duty">When I'm on Duty</option>
+        <option class="feed" id="feed-requests">Requests for Swaps</option>
+      </select>
+    </li>
+    <% end %>
     <li><button id="previous-month">&laquo; Month</button></li>
     <li><button id="previous-week">&laquo; Week</button></li>
     <li>

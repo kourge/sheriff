@@ -24,22 +24,37 @@ tomorrow = today + 1
           else
             day.day.strftime '%A'
         end
+        sub_needed = day.subbings.find { |x| x.request }
+        on_duty = day.sheriff.mail == @user.mail[0]
+        classes << 'swap-needed' if sub_needed
+        classes << 'self' if on_duty
         data = {
           :day => day.day,
           :mail => day.sheriff.mail,
-          :nick => day.sheriff.nick
+          :nick => day.sheriff.nick,
+          :name => day.sheriff.fullname
         }
-        data_attrs = data.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
+        data_attrs = data.to_data_attrs
       %>
       <li class="<%= classes.join(' ') %>">
         <strong><%= name %></strong>
         <a class="sheriff" href="#">
-          <%= data[:nick] %> <em>(<%#= data[:mail] %>)</em>
+          <% if on_duty %>
+            I'm on duty
+          <% else %>
+            <%= data[:name] %> <em>(<%= data[:nick] %>)</em>
+          <% end %>
         </a>
         <% if data[:day] >= today %>
-        <span>
-          <a rel="swap-offer" href="#" <%= data_attrs %>>Offer to Swap</a>
-        </span>
+          <span>
+            <% if on_duty %>
+              <a rel="sub-req" href="#" <%= data_attrs %>>Request a Swap</a>
+            <% elsif sub_needed %>
+              <a rel="sub-req-take" href="#" <%= data_attrs %>>Be the Sub</a>
+            <% else %>
+              <a rel="sub-offer" href="#" <%= data_attrs %>>Offer to Swap</a>
+            <% end %>
+          </span>
         <% end %>
       </li>
       <% end %>
@@ -62,12 +77,12 @@ tomorrow = today + 1
           :mail => day.sheriff.mail,
           :nick => day.sheriff.nick
         }
-        data_attrs = data.map { |k, v| "data-#{k}=\"#{v}\"" }.join(' ')
+        data_attrs = data.to_data_attrs
       %>
       <li class="<%= classes.join(' ') %>">
         <a class="date" href=""><%= data[:day].strftime '%A, %B %d, %Y' %></a>
         <span>
-          <a rel="swap-req" href="#" <%= data_attrs %>>Request a Swap</a>
+          <a rel="sub-req" href="#" <%= data_attrs %>>Request a Swap</a>
         </span>
       </li>
       <% end %>

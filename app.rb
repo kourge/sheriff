@@ -2,6 +2,7 @@ require 'rubygems'
 require 'sinatra'
 require 'erb'
 require 'json'
+require 'yaml'
 require 'partials'
 
 load 'augmentations.rb'

@@ -21,11 +21,11 @@
   <ul id="tabs"><%
     [
       {:title => 'Calendar', :path => '/'},
-      # {:title => 'Sample', :path => '/sample'},
-      {:title => 'Roster', :path => '/roster'},
+      # {:title => 'Roster', :path => '/roster'},
+      {:title => 'Subbings', :path => '/subbings'},
       {:title => 'Preferences', :path => '/preferences'}
     ].each do |link|
-      title, path = link[:title], link[:path],
+      title, path = link[:title], link[:path]
       active = (request.path == path) ? 'active' : ''
     %>
       <li><a class="<%= active %>" href="<%= path %>"><%= title %></a></li><%
