@@ -15,6 +15,7 @@ Sheriff Duty uses several Ruby gems:
 * [json](http://flori.github.com/json/)
 * [pony](http://github.com/benprew/pony)
 * [icalendar](http://icalendar.rubyforge.org/)
+* [rack-flash](http://github.com/nakajima/rack-flash)
 
 Configuration
 -------------
