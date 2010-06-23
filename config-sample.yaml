@@ -1,0 +1,17 @@
+db:
+  driver: "mysql"
+  host: ""
+  username: ""
+  password: ""
+  database: ""
+ldap:
+  host: "pm-ns.mozilla.org"
+  port: 389
+  bind_dn: ""
+  bind_password: ""
+mail:
+  enabled: true
+  from: "sheriffbot@mozilla.com"
+ical:
+  enabled: true
+

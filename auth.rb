@@ -68,7 +68,7 @@ helpers do
     ldap.auth(SETTINGS['ldap']['bind_dn'], SETTINGS['ldap']['bind_password'])
     error 500, 'LDAP bind fail. Contact kourge' if not ldap.bind
     filter = Net::LDAP::Filter.eq('mail', dn.mail)
-    @user = ldap.search(:base => "o=#{dn.o},dc=mozilla", :filter => filter)[0]
+    @user = ldap.search(:base => "dc=mozilla", :filter => filter)[0]
   end
 
   def first_time?(username)
@@ -77,13 +77,10 @@ helpers do
 
   def initialize_user(username)
     populate_user(username)
-    mail = @user.mail[0]
     # Prefill some information.
-    Sheriff.new(
-      :mail => mail,
-      :fullname => @user.cn[0],
-      :nick => mail.split('@')[0]
-    ).save
+    sheriff = Sheriff.new(:fullname => @user.cn[0], :nick => mail.split('@')[0])
+    sheriff.mail = @user.mail[0]
+    sheriff.save
   end
 end
 
