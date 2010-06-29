@@ -15,7 +15,7 @@ task :next_week_assignment do
 
     # Assuming that the last day is always a Friday.
     day = Days.order(:day).last.day + 3
-    weeks_to_fill = 1
+    weeks_to_fill = (ENV['weeks_ahead'] || 1).to_i
 
     # A sheriff with a higher index will be more favored, where the index is
     # the number of days since the sheriff last served duty.
@@ -48,7 +48,7 @@ task :upcoming_notification do
       days_in_advance = sheriff.days_in_advance_for_upcoming_duty
       fast_forward = Date.today + days_in_advance
 
-      next unless Day[fast_forware].sheriff == sheriff
+      next unless Day[fast_forward].sheriff == sheriff
 
       time_range = case days_in_advance
         when 0 then 'today'
@@ -63,6 +63,19 @@ task :upcoming_notification do
         })
       )
     end
+  end
+end
+
+
+task :rehash_subbings do
+  require 'rubygems'
+
+  load 'augmentations.rb'
+  load 'database.rb'
+
+  Subbing.each do |sub|
+    old_id, new_id = sub.id, sub.calculate_id
+    Subbing.where(:id => old_id).update(:id => new_id)
   end
 end
 

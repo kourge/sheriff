@@ -1,5 +1,3 @@
-require 'rubygems'
-require 'sinatra'
 require 'erb'
 require 'json'
 require 'yaml'
@@ -38,19 +36,4 @@ end
 
 
 get '/sample' do erb :sample end
-
-
-################################################################################
-
-
-get '/t/u' do
-  login_required!
-  @user.attribute_names.to_json
-end
-
-
-get '/t/mysql' do
-  content_type :json
-  Day.map { |d| d.inspect }.to_json
-end
 

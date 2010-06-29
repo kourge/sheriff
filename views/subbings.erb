@@ -7,10 +7,9 @@
     <div class="subbing request">
       <%= req.subject.fullname %> (<%= req.subject.nick %>) has requested that someone sub as sheriff on <time><%= req.day.day.strftime '%A, %B %d, %Y' %></time> with the following comment:
       <blockquote class="comment">
-      <%= req.comment %>
+      <%= escape_html req.comment %>
       </blockquote>
       <form method="post" class="subbing" action="/subbings/request/take/<%= req.id %>">
-        <!--<input type="submit" class="take" value="Take this request" />-->
         <%
         data = {
           :nick => req.subject.nick, :mail => req.subject.mail,
@@ -19,11 +18,6 @@
         %>
         <a rel="sub-req-take" class="take" href="#" <%= data.to_data_attrs %>>Take this request</a>
       </form>
-      <!--
-      <form method="post" class="subbing" action="/subbings/request/dismiss/<%= req.id %>">
-        <input type="submit" class="dismiss" value="Dismiss this request" />
-      </form>
-      -->
     </div>
   </div>
   <% end %>
@@ -36,7 +30,7 @@
     <div class="subbing offer">
       <%= offer.subject.fullname %> (<%= offer.subject.nick %>) has offered to sub as sheriff in your place on <time><%= offer.day.day.strftime '%A, %B %d, %Y' %></time> with the following comment:
       <blockquote class="comment">
-      <%= offer.comment %>
+      <%= escape_html offer.comment %>
       </blockquote>
       <%
       data = {
@@ -45,11 +39,9 @@
       }
       %>
       <form method="post" class="subbing" action="/subbings/offer/accept/<%= offer.id %>">
-        <!--<input type="submit" class="accept" value="Accept this offer" />-->
         <a rel="sub-offer-accept" class="accept" href="#" <%= data.to_data_attrs %>>Accept this offer</a>
       </form>
       <form method="post" class="subbing" action="/subbings/offer/decline/<%= offer.id %>">
-        <!--<input type="submit" class="decline" value="Decline this offer" />-->
         <a rel="sub-offer-decline" class="decline" href="#" <%= data.to_data_attrs %>>Decline this offer</a>
       </form>
     </div>

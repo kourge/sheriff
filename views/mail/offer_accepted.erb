@@ -1,6 +1,6 @@
 Hello <%= offer.object.nick %>,
-<%= offer.subject.nick %> has just accepted to sub as sheriff on <%=
-  offer.day.strftime '%A, %B %d, %Y'
+<%= offer.subject.fullname %> (<%= offer.subject.nick %>) has just accepted to sub as sheriff on <%=
+  offer.day.day.strftime '%A, %B %d, %Y'
 %> in your stead.
 
 Cheers,

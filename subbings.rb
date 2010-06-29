@@ -32,6 +32,7 @@ post %r{/subbings/(requests|offers)} do |action|
  ) 
   hash = subbing.calculate_id
   error 400, 'Duplicate subbing' if Subbing.where(:id => hash).count >= 1
+  error 500, subbing.inspect
 
   begin
     subbing.save
@@ -85,12 +86,12 @@ end
 
 
 post '/subbings/request/take/:id' do |id|
-  request = Subbing.fetch(:id => id) or error 404, 'No such subbing request'
+  req = Subbing.fetch(:id => id) or error 404, 'No such subbing request'
 
-  offer.day.update(:sheriff => request.object)
-  offer.update(:fulfilled => true)
+  req.day.update(:sheriff => req.object)
+  req.update(:fulfilled => true)
 
-  notify(:accept, request) if SETTINGS['mail']['enabled']
+  notify(:accept, req) if SETTINGS['mail']['enabled']
 
   if accept_json?
     content_type :json
@@ -103,12 +104,12 @@ end
 
 =begin
 post '/subbings/request/dismiss/:id' do |id|
-  request = Subbing.fetch(:id => id) or error 404, 'No such subbing request'
-  if not request.directed_to? @user
-    error 403, "The specified subbing requeste is not directed towards you"
+  req = Subbing.fetch(:id => id) or error 404, 'No such subbing req'
+  if not req.directed_to? @user
+    error 403, "The specified subbing request is not directed towards you"
   end
-  request.destroy
-  notify(:reject, request) if SETTINGS['mail']['enabled']
+  req.destroy
+  notify(:reject, req) if SETTINGS['mail']['enabled']
 end
 =end
 

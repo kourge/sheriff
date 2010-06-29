@@ -53,7 +53,7 @@ class Subbing < Sequel::Model
   many_to_one :object, :key => :object_mail, :class => :Sheriff
   many_to_one :day, :key => :day_day
 
-  HASH_FACTORS = [:subject_mail, :request_mail, :day]
+  HASH_FACTORS = [:subject_mail, :request_mail, :day_day]
 
   def self.calculate_id(o) HASH_FACTORS.map { |v| o[v].to_s }.join('').md5 end
   def calculate_id; self.id = self.class.calculate_id(self) end
@@ -89,10 +89,10 @@ class Subbing < Sequel::Model
       validates_format email, :object_mail, :message => email_error
     end
 
-    if self.request and self.day.sheriff != self.object
-    errors.add :object_mail, "must be sheriff on #{self.day.day}"
-    elsif not self.request and self.day.sheriff != self.subject
+    if self.request and self.day.sheriff != self.subject
       errors.add :subject_mail, "must be sheriff on #{self.day.day}"
+    elsif not self.request and self.day.sheriff != self.object
+      errors.add :object_mail, "must be sheriff on #{self.day.day}"
     end
   end
 end

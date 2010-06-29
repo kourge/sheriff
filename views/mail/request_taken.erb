@@ -1,5 +1,7 @@
-Hello <%= object %>,
-<%= subject %> has taken your request for him / her to sub as sheriff on <%= day %>.
+Hello <%= req.object.nick %>,
+<%= req.subject.fullname %> (<%= req.subject.nick %>) has taken your request for him / her to sub as sheriff on <%=
+  req.day.day.strftime '%A, %B %d, %Y'
+%>.
 
 Best,
 The Sheriffbot

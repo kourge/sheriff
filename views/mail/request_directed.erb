@@ -1,6 +1,8 @@
 Hello sheriffs,
-<%= subject %> has just requested that someone sub as sheriff on <%= day %> with the following comment:
-<%= comment %>
+<%= req.subject.fullname %> (<%= req.subject.nick %>) has just requested that someone sub as sheriff on <%=
+  req.day.day.strftime '%A, %B %d, %Y'
+%> with the following comment:
+<%= req.comment %>
 
 If you'd like to take this request, go to:
 <%= link %>

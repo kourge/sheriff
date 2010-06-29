@@ -1,6 +1,8 @@
-Hello <%= object %>,
-<%= subject %> has just offered to sub as sheriff on <%= day %> in your stead with the following comment:
-<%= comment %>
+Hello <%= offer.object.nick %>,
+<%= req.subject.fullname %> (<%= req.subject.nick %>) has just offered to sub as sheriff on <%=
+  offer.day.day.strftime '%A, %B %d, %Y'
+%> in your stead with the following comment:
+<%= offer.comment %>
 
 To accept or decline this offer, go to:
 <%= link %>

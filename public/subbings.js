@@ -16,14 +16,15 @@
       );
       box.find('textarea').clear();
 
-      box.down('form').injectValues({ day: date, object: data.mail });
+      box.down('form').writeAttribute(
+        'action', '/subbings/offers'
+      ).injectValues({ day: date, object: data.mail });
+      box.down('input.submit').enable();
     },
 
     beforeSubmit: function(box, e, doHide) {
-      e.stop();
-      var form = box.down('form');
-      console.log(form.serialize());
-      return false;
+      box.down('input.submit').disable();
+      return true;
     },
 
     beforeCancel: function(box) {
@@ -39,13 +40,12 @@
       box.find('textarea').clear();
       
       box.down('form').injectValues({ day: date });
+      box.down('input.submit').enable();
     },
 
     beforeSubmit: function(box, e, doHide) {
-      e.stop();
-      var form = box.down('form');
-      console.log(form.serialize());
-      return false;
+      box.down('input.submit').disable();
+      return true;
     },
 
     beforeCancel: function(box) {
@@ -66,14 +66,14 @@
         '#{nick} <em>(#{mail})</em>'.interpolate(data)
       );
 
-      box.down('form').injectValues({ day: date, object: data.mail });
+      var id = link.readAttribute('data-id');
+      box.down('form').writeAttribute('action', '/subbings/request/take/' + id);
+      box.down('input.submit').enable();
     },
 
     beforeSubmit: function(box, e, doHide) {
-      e.stop();
-      var form = box.down('form');
-      console.log(form.serialize());
-      return false;
+      box.down('input.submit').disable();
+      return true;
     },
 
     beforeCancel: function(box) {
@@ -94,18 +94,19 @@
         '#{nick} <em>(#{mail})</em>'.interpolate(data)
       );
 
-      box.down('form').injectValues({ id: link.readAttribute('data-id') });
+      var id = link.readAttribute('data-id');
+      box.down('form').writeAttribute('action', '/subbings/offer/accept/' + id);
+      box.down('input.submit').enable();
     },
     
     beforeSubmit: function(box, e, doHide) {
-      e.stop();
-      var form = box.down('form');
-      console.log(form.serialize());
-      return false;
+      box.down('input.submit').disable();
+      return true;
     },
 
     beforeCancel: function(box) {
       box.select('input[type=hidden]').invoke('remove');
+      box.down('form').writeAttribute('action', '#');
     }
   },
 
@@ -122,18 +123,19 @@
         '#{nick} <em>(#{mail})</em>'.interpolate(data)
       );
 
-      box.down('form').injectValues({ id: link.readAttribute('data-id') });
+      var id = link.readAttribute('data-id');
+      box.down('form').writeAttribute('action', '/subbings/offer/decline/' + id);
+      box.down('input.submit').enable();
     },
     
     beforeSubmit: function(box, e, doHide) {
-      e.stop();
-      var form = box.down('form');
-      console.log(form.serialize());
-      return false;
+      box.down('input.submit').disable();
+      return true;
     },
 
     beforeCancel: function(box) {
       box.select('input[type=hidden]').invoke('remove');
+      box.down('form').writeAttribute('action', '#');
     }
   }
 

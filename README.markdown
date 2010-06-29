@@ -10,12 +10,23 @@ Sheriff Duty uses several Ruby gems:
 * [sinatra](http://www.sinatrarb.com/)
 * [net/ldap](http://github.com/RoryO/ruby-net-ldap)
 * [sequel](http://sequel.rubyforge.org/)
-* yaml
-* erb
+  * [mysql](http://www.tmtm.org/en/mysql/ruby/)
 * [json](http://flori.github.com/json/)
 * [pony](http://github.com/benprew/pony)
+  * [tlsmail](http://rubyforge.org/projects/tlsmail/) on Ruby < 1.8.7
 * [icalendar](http://icalendar.rubyforge.org/)
 * [rack-flash](http://github.com/nakajima/rack-flash)
+
+Most gems can be installed by simply running:
+
+    $ gem install <gem_name>
+
+`sudo` at your own discretion. On Ruby < 1.8.7, some gems may not install and 
+complain about your Ruby version being too old. In that case, run:
+
+    $ gem install <gem_name> -f
+
+This forces `gem` to proceed with the installation.
 
 Configuration
 -------------
@@ -47,7 +58,7 @@ be moved to the Rakefile in the near future.
     CREATE TABLE `days` (
       `day` date NOT NULL,
       `sheriff_mail` varchar(128) NOT NULL,
-      `updated` timestamp NOT NULL default '0000-00-00 00:00:00',
+      `updated` timestamp NOT NULL default '1970-01-01 00:00:01',
       `revisions` tinyint(4) NOT NULL default '0',
       PRIMARY KEY  (`day`),
       KEY `sheriff_mail` (`sheriff_mail`)
@@ -114,8 +125,7 @@ are `production.ru` and `development.ru`.
 Rakefile
 --------
 The Rakefile contains various tasks that are either necessary for the Sheriff 
-Duty app to continue to function properly, or useful for maintenance activities
-to be run as a cron job.
+Duty app to continue to function properly, or useful for maintenance activities.
 
 When run directly:
 
@@ -125,9 +135,14 @@ The tasks `next_week_assignment` and `upcoming_notification` are invoked by
 default. These default tasks are meant to be run as a daily cron job.
 
 ### next_week_assignment ###
-This task assigns more sheriff for next week and runs every Wednesday; for now 
-it only fills one week ahead. It makes the assumption that no one specific is
-sheriffing and `#developer` fills in on the weekends.
+This task assigns more sheriff for following weeks and runs every Wednesday; 
+run it like this:
+
+    $ rake next_week_assignment weeks_ahead=2
+
+Without the `weeks_ahead` parameter it only fills one week ahead. It also makes 
+the assumption that on the weekends, no one specific is sheriffing and 
+`#developer` fills in.
 
 ### upcoming_notification ###
 This task is responsible for sending sheriffs emails `n` days before their duty 

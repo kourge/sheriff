@@ -14,7 +14,8 @@ helpers do
 
 
   def notify_create(subbing)
-    date = subbing.day.strftime '%A, %B %d, %Y'
+    date = subbing.day.day.strftime '%A, %B %d, %Y'
+    link = 'http://sheriff.khan.mozilla.org/subbing/'
     if subbing.request
       # Notify everyone who allow mail.
       Sheriff.where(:email_notifications => true).each do |sheriff|
@@ -22,7 +23,7 @@ helpers do
           :from => SETTINGS['mail']['from'], :to => subbing.subject.mail,
           :subject => "Sheriff sub needed on #{date}",
           :body => erb(:'mail/request_directed', :layout => false, :locals => {
-            :request => subbing
+            :req => subbing, :link => link
           })
         )
       end
@@ -32,7 +33,7 @@ helpers do
         :from => SETTINGS['mail']['from'], :to => subbing.subject.mail,
         :subject => "Offer to sub as sheriff on #{date}",
         :body => erb(:'mail/offer_extended', :layout => false, :locals => {
-          :offer => subbing
+          :offer => subbing, :link => link
         })
       ) if object.subject.email_notifications
     end
@@ -46,7 +47,7 @@ helpers do
         :from => SETTINGS['mail']['from'], :to => subbing.subject.mail,
         :subject => "",
         :body => erb(:'mail/request_taken', :layout => false, :locals => {
-          :request => subbing
+          :req => subbing
         })
       )
     else
@@ -63,16 +64,16 @@ helpers do
 
 
   def notify_reject(subbing)
-    if subbing.request
-      # Notify original requester of this dismissal
-      Pony.mail(
-        :from => SETTINGS['mail']['from'], :to => subbing.subject.mail,
-        :subject => "",
-        :body => erb(:'mail/request_dismissed', :layout => false, :locals => {
-          :request => subbing
-        })
-      )
-    else
+    # if subbing.request
+    #   # Notify original requester of this dismissal
+    #   Pony.mail(
+    #     :from => SETTINGS['mail']['from'], :to => subbing.subject.mail,
+    #     :subject => "",
+    #     :body => erb(:'mail/request_dismissed', :layout => false, :locals => {
+    #       :req => subbing
+    #     })
+    #   )
+    # else
       # Notify original offerer of this declination
       Pony.mail(
         :from => SETTINGS['mail']['from'], :to => subbing.subject.mail,
@@ -81,7 +82,7 @@ helpers do
           :offer => subbing
         })
       )
-    end
+    # end
   end
 end
 
