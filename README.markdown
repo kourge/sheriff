@@ -52,48 +52,8 @@ Use the included `config-sample.yaml` file as a template to create
 
 ### Database ###
 
-The database schema is presented below and must be manually created. This might 
-be moved to the Rakefile in the near future.
-
-    CREATE TABLE `days` (
-      `day` date NOT NULL,
-      `sheriff_mail` varchar(128) NOT NULL,
-      `updated` timestamp NOT NULL default '1970-01-01 00:00:01',
-      `revisions` tinyint(4) NOT NULL default '0',
-      PRIMARY KEY  (`day`),
-      KEY `sheriff_mail` (`sheriff_mail`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-    CREATE TABLE `sheriffs` (
-      `mail` varchar(128) NOT NULL,
-      `nick` varchar(128) NOT NULL,
-      `fullname` varchar(128) NOT NULL,
-      `email_notifications` tinyint(1) NOT NULL DEFAULT 1,
-      `upcoming_duty_notifications` tinyint(1) NOT NULL DEFAULT 1,
-      `days_in_advance_for_upcoming_duty` tinyint(5) UNSIGNED NOT NULL DEFAULT 2,
-      PRIMARY KEY  (`mail`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-    CREATE TABLE `subbings` (
-      `id` varchar(32) NOT NULL,
-      `subject_mail` varchar(128) NOT NULL,
-      `object_mail` varchar(128) default NULL,
-      `request` tinyint(1) NOT NULL,
-      `fulfilled` tinyint(1) NOT NULL default '0',
-      `day_day` date NOT NULL,
-      `comment` longtext COLLATE utf8_general_ci NOT NULL,
-      PRIMARY KEY  (`id`),
-      KEY `subject_mail` (`subject_mail`),
-      KEY `day_day` (`day_day`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-    CREATE TABLE `sessions` (
-      `sid` varchar(32) NOT NULL,
-      `session` longtext COLLATE utf8_general_ci,
-      `timestamp` timestamp NOT NULL DEFAULT '1970-01-01 00:00:01',
-      PRIMARY KEY (`sid`),
-      KEY `timestamp` (`timestamp`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+The database schema can be set up using the `db_setup` task present in the 
+Rakefile.
 
 ### LDAP Authentication ###
 The LDAP server is used in two ways:
@@ -147,6 +107,10 @@ the assumption that on the weekends, no one specific is sheriffing and
 ### upcoming_notification ###
 This task is responsible for sending sheriffs emails `n` days before their duty 
 depending how their preferences are set.
+
+### setup_db ###
+This task creates the necessary tables in the database. It requires the 
+database settings to be filled out correctly in `config.yaml`.
 
 ### populate_fullnames ###
 This task searches for sheriffs who don't have their fullname filled in and 

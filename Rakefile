@@ -80,6 +80,60 @@ task :rehash_subbings do
 end
 
 
+task :db_setup do
+  require 'rubygems'
+  require 'yaml'
+
+  SETTINGS = YAML.load_file('config.yaml')
+
+  load 'augmentations.rb'
+  load 'database.rb'
+
+  DB.create_table :days do
+    Date :day, :null => false, :primary_key => true
+    String :sheriff_mail, :size => 128
+    timestamp :updated, :null => false,
+                        :default => Time.parse('1970-01-01 00:00:01')
+    Fixnum :revisions, :size => 4, :null => false, :default => 0
+
+    index :sheriff_mail
+  end
+
+  DB.create_table :sheriffs do
+    String :mail, :size => 128, :null => false, :primary_key => true
+    String :nick, :size => 128, :null => false
+    String :fullname, :size => 128, :null => false
+
+    TrueClass :email_notifications, :null => false, :default => true
+    TrueClass :upcoming_duty_notifications, :null => false, :default => true
+    Fixnum :days_in_advance_for_upcoming_duty, :null => false, :size => 5,
+                                               :default => 2, :unsigned => true
+  end
+
+  DB.create_table :subbings do
+    String :id, :size => 32, :null => false, :primary_key => true
+    String :subject_mail, :size => 128, :null => false
+    String :object_mail, :size => 128, :default => nil
+    TrueClass :request, :null => false
+    TrueClass :fulfilled, :null => false, :default => false
+    Date :day_day, :null => false
+    longtext :comment, :null => false
+
+    index :subject_mail
+    index :day_day
+  end
+
+  DB.create_table :sessions do
+    String :sid, :size => 32, :null => false, :primary_key => true
+    longtext :session
+    timestamp :timestamp, :null => false,
+                          :default => Time.parse('1970-01-01 00:00:01')
+
+    index :timestamp
+  end
+end
+
+
 task :populate_fullnames do
   require 'rubygems'
   require 'yaml'
