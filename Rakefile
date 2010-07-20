@@ -175,6 +175,7 @@ task :import_from_google_calendar do
 
   load 'augmentations.rb'
   load 'database.rb'
+  load 'compatibility.rb' if RUBY_VERSION.split('.').map { |s| s.to_i }[2] < 7
 
   ldap = Net::LDAP.new(
     :host => SETTINGS['ldap']['host'], :port => SETTINGS['ldap']['port']

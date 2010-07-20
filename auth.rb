@@ -1,21 +1,5 @@
 require 'net/ldap'
 
-if RUBY_VERSION.split('.').map { |s| s.to_i }[2] < 7
-  module Fix; end unless defined? Fix
-
-  module Fix::IOFix
-    def getbyte; self.getc; end
-  end
-
-  class IO
-    include Fix::IOFix
-  end
-
-  class StringIO
-    include Fix::IOFix
-  end
-end
-
 
 # The DN class responsible for parsing various info out of an email address.
 # It is assumed that an input like "karen" is meant to be "karen@mozilla.com".
