@@ -2,8 +2,8 @@
 
 SETTINGS = YAML.load_file('config.yaml')
 
-mime :plain, 'text/plain'
-mime :json, 'application/json'
+mime_type :plain, 'text/plain'
+mime_type :json, 'application/json'
 
 helpers do
   def accept_html?; request.accept.first == 'text/html' end
