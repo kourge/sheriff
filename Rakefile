@@ -19,11 +19,9 @@ task :next_week_assignment do
 
     # A sheriff with a higher index will be more favored, where the index is
     # the number of days since the sheriff last served duty.
-    Sheriff.join(
-      :days, :sheriff_mail => :mail
-    ).group_by(:mail).order_by(:index).select_append {
+    Sheriff.join(:days, :sheriff_mail => :mail).group_by(:mail).select_append {
       MAX(day).as(index)
-    }.limit(weeks_to_fill * 5).each do |sheriff|
+    }.order_by(:index).limit(weeks_to_fill * 5).each do |sheriff|
       Day.insert(:day => day, :sheriff_mail => sheriff.mail)
       day += (day.wday == friday) ? 3 : 1
     end
@@ -115,7 +113,7 @@ task :db_setup do
     String :subject_mail, :size => 128, :null => false
     String :object_mail, :size => 128, :default => nil
     TrueClass :request, :null => false
-    TrueClass :fulfilled, :null => false, :default => false
+    FalseClass :fulfilled, :null => false, :default => false
     Date :day_day, :null => false
     longtext :comment, :null => false
 
@@ -208,7 +206,6 @@ task :import_from_google_calendar do
       r
     end
 
-    entries = nil
     entries = search.call('cn', name)
     entries = search.call('cn', "*#{nick}*") if entries.empty?
     entries = search.call('im', "*#{nick}*") if entries.empty?
