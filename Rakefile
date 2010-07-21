@@ -26,7 +26,7 @@ task :next_week_assignment do
     # Consider the tenderfeet (those who've just become sheriffs) first.
     tenderfeet = Sheriff.left_join(
       :days, :sheriff_mail => :mail
-    ).where(:sheriff_mail => nil)
+    ).where(:sheriff_mail => nil, :serving => true)
     next_ups -= tenderfeet.count
     tenderfeet.each(&fill_up)
 
