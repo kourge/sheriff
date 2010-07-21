@@ -17,16 +17,24 @@ task :next_week_assignment do
     day = Days.order(:day).last.day + 3
     weeks_to_fill = (ENV['weeks_ahead'] || 1).to_i
 
-    # A sheriff with a higher index will be more favored, where the index is
-    # the number of days since the sheriff last served duty.
-    Sheriff.where(:serving).join(
-      :days, :sheriff_mail => :mail
-    ).group_by(:mail).select_append {
-      MAX(day).as(index)
-    }.order_by(:index).limit(weeks_to_fill * 5).each do |sheriff|
+    next_ups = weeks_to_fill * 5
+    fill_up = lambda do |sheriff|
       Day.insert(:day => day, :sheriff_mail => sheriff.mail)
       day += (day.wday == friday) ? 3 : 1
     end
+
+    # Consider the tenderfeet (those who've just become sheriffs) first.
+    tenderfeet = Sheriff.left_join(
+      :days, :sheriff_mail => :mail
+    ).where(:sheriff_mail => nil)
+    next_ups -= tenderfeet.count
+    tenderfeet.each(&fill_up)
+
+    # A sheriff with a higher index will be more favored, where the index is
+    # the number of days since the sheriff last served duty.
+    Sheriff.join(:days, :sheriff_mail => :mail).group_by(:mail).select_append {
+      MAX(day).as(index)
+    }.order_by(:index).where(:serving).limit(next_ups).each(&fill_up)
   end
 end
 
