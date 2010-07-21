@@ -19,7 +19,9 @@ task :next_week_assignment do
 
     # A sheriff with a higher index will be more favored, where the index is
     # the number of days since the sheriff last served duty.
-    Sheriff.join(:days, :sheriff_mail => :mail).group_by(:mail).select_append {
+    Sheriff.where(:serving).join(
+      :days, :sheriff_mail => :mail
+    ).group_by(:mail).select_append {
       MAX(day).as(index)
     }.order_by(:index).limit(weeks_to_fill * 5).each do |sheriff|
       Day.insert(:day => day, :sheriff_mail => sheriff.mail)
@@ -101,6 +103,7 @@ task :db_setup do
     String :mail, :size => 128, :null => false, :primary_key => true
     String :nick, :size => 128, :null => false
     String :fullname, :size => 128, :null => false
+    TrueClass :serving, :null => false, :default => true
 
     TrueClass :email_notifications, :null => false, :default => true
     TrueClass :upcoming_duty_notifications, :null => false, :default => true
