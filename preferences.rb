@@ -9,6 +9,7 @@ post '/preferences' do
   login_required!
   prefs = {
     :fullname => String, :nick => String,
+    :serving => Boolean,
     :email_notifications => Boolean, :upcoming_duty_notifications => Boolean,
     :days_in_advance_for_upcoming_duty => Integer
   }
