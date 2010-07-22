@@ -21,13 +21,13 @@ task :next_week_assignment do
       else Date.parse(ENV['last_day'])
     end
     # Assuming that the last day is always a Friday.
-    day = last_day + 3
+    date = last_day + 3
     weeks_to_fill = (ENV['weeks_ahead'] || 1).to_i
 
     next_ups = weeks_to_fill * 5
     fill_up = lambda do |sheriff|
-      Day.insert(:day => day, :sheriff_mail => sheriff.mail)
-      day += (day.wday == friday) ? 3 : 1
+      Day.new(:sheriff_mail => sheriff.mail) { |d| d.day = date }.save
+      date += (date.wday == friday) ? 3 : 1
     end
 
     # Consider the tenderfeet (those who've just become sheriffs) first.
@@ -237,18 +237,16 @@ task :import_from_google_calendar do
     mail = entry.mail[0]
 
     if not Sheriff[mail]
-      sheriff = Sheriff.new(:nick => nick, :fullname => name)
-      sheriff.mail = mail
-      sheriff.save
+      sheriff = Sheriff.new(
+        :nick => nick, :fullname => name
+      ) { |s| s.mail = mail }.save
       puts "Added sheriff: #{sheriff.inspect}" if ENV['verbose'] == 'true'
     end
 
     if not Day[event.dtstart]
       day = Day.new(
         :sheriff_mail => mail, :updated => Time.parse(event.dtstamp.strftime)
-      )
-      day.day = event.dtstart
-      day.save
+      ) { |d| d.day = event.dtstart }.save
       puts "Added day: #{day.inspect}" if ENV['verbose'] == 'true'
     end
   end

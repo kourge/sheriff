@@ -78,10 +78,9 @@ helpers do
   def initialize_user(username)
     populate_user(username)
     # Prefill some information.
-    sheriff = Sheriff.new(:fullname => @user.cn[0],
-                          :nick => @user.mail[0].split('@')[0])
-    sheriff.mail = @user.mail[0]
-    sheriff.save
+    sheriff = Sheriff.new(
+      :fullname => @user.cn[0], :nick => @user.mail[0].split('@')[0])
+    ) { |s| s.mail = @user.mail[0] }.save
   end
 end
 
