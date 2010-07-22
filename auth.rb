@@ -79,7 +79,7 @@ helpers do
     populate_user(username)
     # Prefill some information.
     sheriff = Sheriff.new(
-      :fullname => @user.cn[0], :nick => @user.mail[0].split('@')[0])
+      :fullname => @user.cn[0], :nick => @user.mail[0].split('@')[0]
     ) { |s| s.mail = @user.mail[0] }.save
   end
 end
