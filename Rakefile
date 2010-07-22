@@ -7,14 +7,21 @@ task :default => [:next_week_assignment, :upcoming_notification]
 
 task :next_week_assignment do
   wednesday, friday = 3, 5
-  if Date.today.wday == wednesday
+  if Date.today.wday == wednesday or ENV['immediately'] == 'true'
     require 'rubygems'
+
+    SETTINGS = YAML.load_file('config.yaml')
 
     load 'augmentations.rb'
     load 'database.rb'
 
+    last_day = case ENV['last_day']
+      when nil then Day.order(:day).last.day
+      when 'today' then Date.today
+      else Date.parse(ENV['last_day'])
+    end
     # Assuming that the last day is always a Friday.
-    day = Days.order(:day).last.day + 3
+    day = last_day + 3
     weeks_to_fill = (ENV['weeks_ahead'] || 1).to_i
 
     next_ups = weeks_to_fill * 5
