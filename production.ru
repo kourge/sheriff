@@ -2,7 +2,7 @@
 
 require 'rubygems'
 
-load 'compatibility.rb' if RUBY_VERSION.split('.').map { |s| s.to_i }[2] < 7
+load 'compatibility.rb' if RUBY_VERSION < '1.8.7'
 
 require 'sinatra'
 

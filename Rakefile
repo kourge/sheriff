@@ -104,6 +104,11 @@ task :db_setup do
   load 'augmentations.rb'
   load 'database.rb'
 
+  if DB.class.adapter_scheme == :mysql
+    Sequel::MySQL.default_charset = 'utf8'
+    Sequel::MySQL.default_collate = 'utf8_general_ci'
+  end
+
   DB.create_table :days do
     Date :day, :null => false, :primary_key => true
     String :sheriff_mail, :size => 128
@@ -191,7 +196,7 @@ task :import_from_google_calendar do
 
   load 'augmentations.rb'
   load 'database.rb'
-  load 'compatibility.rb' if RUBY_VERSION.split('.').map { |s| s.to_i }[2] < 7
+  load 'compatibility.rb' if RUBY_VERSION < '1.8.7'
 
   ldap = Net::LDAP.new(
     :host => SETTINGS['ldap']['host'], :port => SETTINGS['ldap']['port']

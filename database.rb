@@ -8,7 +8,7 @@ $db.call
 # on every method call. This way, no MySQL connections would be left open and
 # hanging until the server shuts it down 8 hours later.
 # tl;dr This prevents the "MySQL server has gone away" exception.
-DB = Object.new
+DB = Sequel::BasicObject.new
 class << DB
   def method_missing(*a, &b) $db.call.send(*a, &b) end
 end

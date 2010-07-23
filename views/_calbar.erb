@@ -9,7 +9,7 @@ tomorrow = today + 1
     <h2><span>Who's on Duty Next</span></h2>
     <ul>
       <%
-      Day.where { day >= yesterday }.limit(5).each do |day|
+      Day.where { day >= yesterday }.order(:day).limit(5).each do |day|
         classes = []
         name = case day.day
           when yesterday
