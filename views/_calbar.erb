@@ -9,7 +9,7 @@ tomorrow = today + 1
     <h2><span>Who's on Duty Next</span></h2>
     <ul>
       <%
-      Day.where(:day => yesterday..(today + 5)).each do |day|
+      Day.where { day >= yesterday }.limit(5).each do |day|
         classes = []
         name = case day.day
           when yesterday
@@ -29,34 +29,32 @@ tomorrow = today + 1
         classes << 'swap-needed' if sub_needed
         classes << 'self' if on_duty
         data = {
-          :day => day.day,
-          :mail => day.sheriff.mail,
-          :nick => day.sheriff.nick,
-          :name => day.sheriff.fullname
+          :day => day.day, :mail => day.sheriff.mail,
+          :nick => day.sheriff.nick, :name => day.sheriff.fullname
         }
         data_attrs = data.to_data_attrs
-      %>
-      <li class="<%= classes.join(' ') %>">
-        <strong><%= name %></strong>
-        <a class="sheriff" href="#">
-          <% if on_duty %>
-            I'm on duty
-          <% else %>
-            <%= data[:name] %> <em>(<%= data[:nick] %>)</em>
-          <% end %>
-        </a>
-        <% if data[:day] >= today %>
-          <span>
+        %>
+        <li class="<%= classes.join(' ') %>">
+          <strong><%= name %></strong>
+          <a class="sheriff" href="#">
             <% if on_duty %>
-              <a rel="sub-req" href="#" <%= data_attrs %>>Request a Swap</a>
-            <% elsif sub_needed %>
-              <a rel="sub-req-take" href="#" <%= data_attrs %>>Be the Sub</a>
+              I'm on duty
             <% else %>
-              <a rel="sub-offer" href="#" <%= data_attrs %>>Offer to Swap</a>
+              <%= data[:name] %> <em>(<%= data[:nick] %>)</em>
             <% end %>
-          </span>
-        <% end %>
-      </li>
+          </a>
+          <% if data[:day] >= today %>
+            <span>
+              <% if on_duty %>
+                <a rel="sub-req" href="#" <%= data_attrs %>>Request a Swap</a>
+              <% elsif sub_needed %>
+                <a rel="sub-req-take" href="#" <%= data_attrs %>>Be the Sub</a>
+              <% else %>
+                <a rel="sub-offer" href="#" <%= data_attrs %>>Offer to Swap</a>
+              <% end %>
+            </span>
+          <% end %>
+        </li>
       <% end %>
     </ul>
   </div></div>
@@ -73,9 +71,7 @@ tomorrow = today + 1
         classes = []
         classes << 'next' if count == 1
         data = {
-          :day => day.day,
-          :mail => day.sheriff.mail,
-          :nick => day.sheriff.nick
+          :day => day.day, :mail => day.sheriff.mail, :nick => day.sheriff.nick
         }
         data_attrs = data.to_data_attrs
       %>
