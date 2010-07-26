@@ -1,4 +1,6 @@
 
 require 'rack-flash'
-use Rack::Flash, :accessorize => [:notice, :error]
+class SheriffApp < Sinatra::Base
+  use Rack::Flash, :accessorize => [:notice, :error]
+end
 

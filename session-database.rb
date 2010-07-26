@@ -117,5 +117,9 @@ module Rack
   end
 end
 
-use Rack::Session::Sequel, :key => 'rack.session', :db => $db, :table => :sessions
+class SheriffApp < Sinatra::Base
+  use Rack::Session::Sequel, :key => 'rack.session',
+                             :db => $db,
+                             :table => :sessions
+end
 

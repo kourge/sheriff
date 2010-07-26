@@ -86,7 +86,3 @@ class Date
   def to_month; Month.new self end
 end
 
-get '/calendar' do
-  from, to = Date.parse(request['from']), Date.parse(request['to'])
-end
-

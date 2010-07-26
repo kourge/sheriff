@@ -1,13 +1,15 @@
-# vi:set filetype=ruby:
+# vim:set filetype=ruby:
 
 require 'rubygems'
 
 load 'compatibility.rb' if RUBY_VERSION < '1.8.7'
 
-require 'sinatra'
-
-disable :run
-set :environment => :production
-
+require 'sinatra/base'
 require 'app'
-run Sinatra::Application
+
+class SheriffApp < Sinatra::Base
+  disable :show_exceptions
+  set :environment => :production
+end
+
+run SheriffApp

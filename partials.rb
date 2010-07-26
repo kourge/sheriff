@@ -1,3 +1,4 @@
+
 # from http://gist.github.com/119874
 module Sinatra::Partials
   def partial(template, *args)
@@ -16,6 +17,9 @@ module Sinatra::Partials
   end
 end
 
-helpers do 
-  include Sinatra::Partials
+class SheriffApp < Sinatra::Base
+  helpers do 
+    include Sinatra::Partials
+  end
 end
+
