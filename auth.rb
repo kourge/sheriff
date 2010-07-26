@@ -2,17 +2,16 @@ require 'net/ldap'
 
 
 # The DN class responsible for parsing various info out of an email address.
-# It is assumed that an input like "karen" is meant to be "karen@mozilla.com".
 class DN < Struct.new(:dn, :mail, :o)
   def initialize(mail)
-    match = mail.match /^[a-z]+@(.+?)\.(.+)$/
-    o = match.nil? ? 'com' : case [match[1], match[2]]
+    match = mail.match /^[a-z.]+@(.+?)\.(.+)$/
+    error 400, 'Invalid email address' if match.nil?
+    o = case [match[1], match[2]]
       when ['mozilla', 'com'], ['mozilla-japan', 'org'] then 'com'
       when ['mozilla', 'org'], ['mozillafoundation', 'org'] then 'org'
       else 'net'
     end
-    mail += '@mozilla.com' if match.nil?
-    self.dn = "mail=#{@mail},o=#{o},dc=mozilla"
+    self.dn = "mail=#{mail},o=#{o},dc=mozilla"
     self.mail = mail
     self.o = o
   end
@@ -52,10 +51,9 @@ class SheriffApp < Sinatra::Base
     # Actually checks credentials using the LDAP server.
     def authorized?(username, password)
       return false if not username or not password
-      dn = DN.new(username)
 
       ldap = ldap_connection
-      ldap.auth("mail=#{dn.mail},o=#{dn.o},dc=mozilla", password)
+      ldap.auth(DN.new(username).dn, password)
       ldap.bind # bind returns a boolean
     end
 
@@ -63,7 +61,6 @@ class SheriffApp < Sinatra::Base
     def populate_user(username=nil)
       return if @user
       error 400, 'No user to populate. Contact kourge' if username.nil?
-      dn = DN.new(username)
 
       ldap = ldap_connection
       ldap.auth(SETTINGS['ldap']['bind_dn'], SETTINGS['ldap']['bind_password'])
