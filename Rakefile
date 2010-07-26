@@ -1,5 +1,8 @@
 
 require 'date'
+require 'yaml'
+SETTINGS_FILE = File.join(File.dirname(__FILE__), 'config.yaml')
+SETTINGS = YAML.load_file(File.expand_path(SETTINGS_FILE))
 
 
 task :default => [:next_week_assignment, :upcoming_notification]
@@ -9,8 +12,6 @@ task :next_week_assignment do
   wednesday, friday = 3, 5
   if Date.today.wday == wednesday or ENV['immediately'] == 'true'
     require 'rubygems'
-
-    SETTINGS = YAML.load_file('config.yaml')
 
     load 'augmentations.rb'
     load 'database.rb'
@@ -51,8 +52,6 @@ task :upcoming_notification do
     require 'rubygems'
     require 'erb'
     require 'pony'
-
-    SETTINGS = YAML.load_file('config.yaml')
 
     load 'augmentations.rb'
     load 'database.rb'
@@ -98,8 +97,6 @@ end
 task :db_setup do
   require 'rubygems'
   require 'yaml'
-
-  SETTINGS = YAML.load_file('config.yaml')
 
   load 'augmentations.rb'
   load 'database.rb'
@@ -160,8 +157,6 @@ task :populate_fullnames do
   require 'yaml'
   require 'net/ldap'
 
-  SETTINGS = YAML.load_file('config.yaml')
-
   load 'augmentations.rb'
   load 'database.rb'
 
@@ -191,8 +186,6 @@ task :import_from_google_calendar do
   require 'icalendar'
   require 'uri'
   require 'time'
-
-  SETTINGS = YAML.load_file('config.yaml')
 
   load 'augmentations.rb'
   load 'database.rb'
