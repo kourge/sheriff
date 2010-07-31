@@ -1,19 +1,35 @@
 require 'net/ldap'
 
 
-# The DN class responsible for parsing various info out of an email address.
-class DN < Struct.new(:dn, :mail, :o)
-  def initialize(mail)
-    match = mail.match /^[a-z.]+@(.+?)\.(.+)$/
-    error 400, 'Invalid email address' if match.nil?
-    o = case [match[1], match[2]]
-      when ['mozilla', 'com'], ['mozilla-japan', 'org'] then 'com'
-      when ['mozilla', 'org'], ['mozillafoundation', 'org'] then 'org'
-      else 'net'
+module Auth
+  # The DN class responsible for parsing various info out of an email address.
+  class DN < Struct.new(:dn, :mail, :o)
+    def initialize(mail)
+      match = mail.match /^[a-z.]+@(.+?)\.(.+)$/
+      o = case [match[1], match[2]]
+        when ['mozilla', 'com'], ['mozilla-japan', 'org'] then 'com'
+        when ['mozilla', 'org'], ['mozillafoundation', 'org'] then 'org'
+        else 'net'
+      end
+      self.dn = "mail=#{mail},o=#{o},dc=mozilla"
+      self.mail = mail
+      self.o = o
     end
-    self.dn = "mail=#{mail},o=#{o},dc=mozilla"
-    self.mail = mail
-    self.o = o
+  end
+
+  def self.ldap_connection
+    Net::LDAP.new(
+      :host => SETTINGS['ldap']['host'], :port => SETTINGS['ldap']['port']
+    )
+  end
+
+  # Actually checks credentials using the LDAP server.
+  def self.authorized?(username, password)
+    return false if not username or not password
+
+    ldap = self.ldap_connection
+    ldap.auth(DN.new(username).dn, password)
+    ldap.bind # bind returns a boolean
   end
 end
 
@@ -21,7 +37,7 @@ end
 class SheriffApp < Sinatra::Base
   helpers do
     def login(username, password)
-      return false if not authorized?(username, password)
+      return false if not Auth.authorized?(username, password)
       session[:user] = { :mail => username }
       true
     end
@@ -42,35 +58,20 @@ class SheriffApp < Sinatra::Base
       error 401, 'You need to log in first.' unless logged_in?
     end
 
-    def ldap_connection
-      Net::LDAP.new(
-        :host => SETTINGS['ldap']['host'], :port => SETTINGS['ldap']['port']
-      )
-    end
-
-    # Actually checks credentials using the LDAP server.
-    def authorized?(username, password)
-      return false if not username or not password
-
-      ldap = ldap_connection
-      ldap.auth(DN.new(username).dn, password)
-      ldap.bind # bind returns a boolean
-    end
-
     # Populates @user with the LDAP entry of the current user.
     def populate_user(username=nil)
       return if @user
       error 400, 'No user to populate. Contact kourge' if username.nil?
 
-      ldap = ldap_connection
+      ldap = Auth.ldap_connection
       ldap.auth(SETTINGS['ldap']['bind_dn'], SETTINGS['ldap']['bind_password'])
       error 500, 'LDAP bind fail. Contact kourge' if not ldap.bind
-      filter = Net::LDAP::Filter.eq('mail', dn.mail)
+      filter = Net::LDAP::Filter.eq('mail', Auth::DN.new(username).mail)
       @user = ldap.search(:base => "dc=mozilla", :filter => filter)[0]
     end
 
     def first_time?(username)
-      Sheriff[DN.new(username).mail].nil?
+      Sheriff[Auth::DN.new(username).mail].nil?
     end
 
     def initialize_user(username)
