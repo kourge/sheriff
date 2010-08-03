@@ -28,6 +28,7 @@ class SheriffApp < Sinatra::Base
   end
 end
 
+load 'ssl.rb' if SETTINGS['ssl']['enforced']
 load 'mail.rb' if SETTINGS['mail']['enabled']
 load 'feeds.rb' if SETTINGS['ical']['enabled']
 

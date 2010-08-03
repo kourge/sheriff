@@ -9,6 +9,8 @@ ldap:
   port: 389
   bind_dn: ""
   bind_password: ""
+ssl:
+  enforced: true
 mail:
   enabled: true
   from: "sheriffbot@mozilla.com"

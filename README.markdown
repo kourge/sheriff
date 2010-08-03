@@ -16,6 +16,7 @@ Sheriff Duty uses several Ruby gems:
   * [tlsmail](http://rubyforge.org/projects/tlsmail/) on Ruby < 1.8.7
 * [icalendar](http://icalendar.rubyforge.org/)
 * [rack-flash](http://github.com/nakajima/rack-flash)
+* [rack-ssl-enforcer](http://github.com/tobmatth/rack-ssl-enforcer)
 
 Most gems can be installed by simply running:
 
@@ -44,6 +45,8 @@ Use the included `config-sample.yaml` file as a template to create
       port: 389
       bind_dn: ""
       bind_password: ""
+    ssl:
+      enforced: true
     mail:
       enabled: true
       from: "sheriffbot@mozilla.com"
@@ -65,6 +68,11 @@ Other than this, the credentials are not used in any other way.
 * The credentials in the config file (the `bind_dn` and `bind_password` fields) 
 are currently used to prepopulate a sheriff's basic info (such as their full 
 name) or by the various tasks in Rakefile.
+
+### SSL Enforcement ###
+SSL enforcement redirects all plain-text requests to their equivalent SSL URLs.
+It should be enabled as a good practice; it is particularly dangerous to send
+LDAP credentials in clear over the wire.
 
 ### Email Notification ###
 The `pony` gem is used to send out email notifications for sheriffs who have 
