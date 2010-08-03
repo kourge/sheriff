@@ -1,7 +1,9 @@
 
 require 'date'
 require 'yaml'
-SETTINGS_FILE = File.join(File.dirname(__FILE__), 'config.yaml')
+BASEDIR = File.dirname(__FILE__)
+$: << BASEDIR
+SETTINGS_FILE = File.join(BASEDIR, 'config.yaml')
 SETTINGS = YAML.load_file(File.expand_path(SETTINGS_FILE))
 
 
