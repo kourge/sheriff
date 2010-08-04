@@ -33,7 +33,6 @@ class SheriffApp < Sinatra::Base
    ) 
     hash = subbing.calculate_id
     error 400, 'Duplicate subbing' if Subbing.where(:id => hash).count >= 1
-    error 500, subbing.inspect
 
     begin
       subbing.save
@@ -44,7 +43,7 @@ class SheriffApp < Sinatra::Base
 
     notify(:create, subbing) if SETTINGS['mail']['enabled']
 
-    status 202 # Created
+    status 201 # Created
     if accept_json?
       content_type :json
       subbing.values.to_json
