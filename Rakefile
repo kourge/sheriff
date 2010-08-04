@@ -59,7 +59,7 @@ task :upcoming_notification do
     load 'database.rb'
 
     Sheriff.where(
-      :upcoming_duty_notification => true
+      :upcoming_duty_notifications => true
     ).order(:days_in_advance_for_upcoming_duty).each do |sheriff|
       days_in_advance = sheriff.days_in_advance_for_upcoming_duty
       fast_forward = Date.today + days_in_advance
