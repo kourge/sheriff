@@ -93,7 +93,7 @@ class SheriffApp < Sinatra::Base
 
 
   post '/login' do
-    username, password = request['username'], request['password']
+    username, password = request['username'].strip, request['password']
     succeeded = login(username, password)
     error 401, 'Authentication failed.' if not succeeded
     if first_time? username
