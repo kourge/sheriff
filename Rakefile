@@ -16,7 +16,7 @@ task :next_week_assignment do
     require 'rubygems'
 
     load 'augmentations.rb'
-    load 'database.rb'
+    load 'database.rb' unless defined?(DB)
 
     last_day = case ENV['last_day']
       when nil then Day.order(:day).last.day
@@ -53,30 +53,35 @@ task :upcoming_notification do
   if Time.now.hour == 0
     require 'rubygems'
     require 'erb'
+    require 'ostruct'
     require 'pony'
 
     load 'augmentations.rb'
-    load 'database.rb'
+    load 'database.rb' unless defined?(DB)
 
     Sheriff.where(
       :upcoming_duty_notifications => true
     ).order(:days_in_advance_for_upcoming_duty).each do |sheriff|
       days_in_advance = sheriff.days_in_advance_for_upcoming_duty
-      fast_forward = Date.today + days_in_advance
+      fast_forward = Day[Date.today + days_in_advance]
 
-      next unless Day[fast_forward].sheriff == sheriff
+      next if fast_forward.nil? or fast_forward.sheriff != sheriff
 
       time_range = case days_in_advance
         when 0 then 'today'
         when 1 then 'tomorrow'
         else "in #{days_in_advance} days"
       end
+
+      template = nil
+      template_filename = File.join(BASEDIR, 'mail', 'upcoming_duty.erb')
+      open(template_filename, 'r') { |f| template = f.read }
       Pony.mail(
         :from => SETTINGS['mail']['from'], :to => sheriff.mail,
         :subject => "You're up for sheriffing #{time_range}",
-        :body => erb(:'mail/upcoming_duty', :layout => false, :locals => {
+        :body => ERB.new(template).result(OpenStruct.new(
           :sheriff => sheriff, :time_range => time_range
-        })
+        ).send(:binding))
       )
     end
   end
@@ -87,7 +92,7 @@ task :rehash_subbings do
   require 'rubygems'
 
   load 'augmentations.rb'
-  load 'database.rb'
+  load 'database.rb' unless defined?(DB)
 
   Subbing.each do |sub|
     old_id, new_id = sub.id, sub.calculate_id
@@ -101,7 +106,7 @@ task :db_setup do
   require 'yaml'
 
   load 'augmentations.rb'
-  load 'database.rb'
+  load 'database.rb' unless defined?(DB)
 
   if DB.class.adapter_scheme == :mysql
     Sequel::MySQL.default_charset = 'utf8'
@@ -160,7 +165,7 @@ task :populate_fullnames do
   require 'net/ldap'
 
   load 'augmentations.rb'
-  load 'database.rb'
+  load 'database.rb' unless defined?(DB)
 
   ldap = Net::LDAP.new(
     :host => SETTINGS['ldap']['host'], :port => SETTINGS['ldap']['port']
@@ -190,7 +195,7 @@ task :import_from_google_calendar do
   require 'time'
 
   load 'augmentations.rb'
-  load 'database.rb'
+  load 'database.rb' unless defined?(DB)
   load 'compatibility.rb' if RUBY_VERSION < '1.8.7'
 
   ldap = Net::LDAP.new(
