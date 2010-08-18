@@ -65,8 +65,8 @@
                   <% else %>
                     <p class="sheriff">
                       <a href="#">
-                        <%= days[key].sheriff.fullname %><br />
-                        <em>(<%= days[key].sheriff.nick %>)</em>
+                        <%= Rack::Utils::escape_html(days[key].sheriff.fullname) %><br />
+                        <em>(<%= Rack::Utils::escape_html(days[key].sheriff.nick) %>)</em>
                       </a>
                     </p>
                     <% if sub_needed %>

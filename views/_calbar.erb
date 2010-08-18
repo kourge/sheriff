@@ -40,7 +40,7 @@ tomorrow = today + 1
             <% if on_duty %>
               I'm on duty
             <% else %>
-              <%= data[:name] %> <em>(<%= data[:nick] %>)</em>
+              <%= escape_html(data[:name]) %> <em>(<%= escape_html(data[:nick]) %>)</em>
             <% end %>
           </a>
           <% if data[:day] >= today %>

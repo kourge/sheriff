@@ -7,13 +7,13 @@
   <p>
   <label for="fullname">Name: </label>
   <input type="text" name="fullname" id="fullname"
-         value="<%= prefs.fullname %>" />
+         value="<%= escape_html prefs.fullname %>" />
   </p>
 
   <p>
   <label for="nick">IRC nick: </label>
   <input type="text" name="nick" id="nick"
-         value="<%= prefs.nick %>" />
+         value="<%= escape_html prefs.nick %>" />
   </p>
 
   <!--
